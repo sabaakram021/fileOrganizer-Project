@@ -20,9 +20,16 @@ let folderExists = fs.existsSync(folderPath);
 if(folderExists){
     let files = fs.readdirSync(folderPath);
     for(let i=0;i<files.length;i++){
-        let ext = path.extname(files[i]);
+        let fileName = files[i];
+        let ext = path.extname(fileName);
         let folderName = givefolderName(ext);
-        console.log("extension--",ext,"folderName--",folderName);
+        // console.log("extension--",ext,"folderName--",folderName);
+        let pathofcommingFolder = path.join(folderPath,folderName);
+        if(!fs.existsSync(pathofcommingFolder)){
+            fs.mkdirSync(pathofcommingFolder);
+        }
+        moveFile(folderPath,pathofcommingFolder,fileName);
+        
     }
 }else{
     console.log("Please enter a valid path");
@@ -38,4 +45,11 @@ function givefolderName(ext){
         }
     }
     return "others";
+}
+
+function moveFile(folderPath,pathofcommingFolder,fileName){
+    let sourcePath = path.join(folderPath,fileName);
+    let destinationPath = path.join(pathofcommingFolder,fileName);
+    fs.copyFileSync(sourcePath,destinationPath);
+    fs.unlinkSync(sourcePath);
 }
